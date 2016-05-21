@@ -1,0 +1,72 @@
+__author__ = 'nori'
+
+from random import shuffle
+import re
+
+# fajl beolvasasa
+f = open("text.txt", "r")
+encrypted = open("encrypted.txt", "w",-1 )
+text = f.read()
+#old = f.read()
+
+abc = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z', 'I']
+abcLength=len(abc)
+randABC = list(abc)
+shuffle(randABC)
+
+print text
+
+#szoveg formalizalasaa
+text = text.upper()
+text=re.sub('[\s+]', '',text)
+textLength = len(text)
+
+sor =0
+for t in range(0, textLength):
+    if sor==5:
+        print ''
+        sor=0
+    if t%4==0:
+        print text[t:t+4],
+        sor+=1
+print
+
+new=list(text)
+print randABC
+
+
+#szoveg titkositasa
+print 'titkositva:'
+i=0
+print textLength
+print abcLength
+for i in range(0, len(text)):
+    print i
+    print text[i]
+    for a in abc:
+        if text[i] == a:
+            new[i] = randABC[abc.index(a)]
+            i += 1
+            break
+        elif text[i] == '.':
+            new[i]=''
+        elif text[i] == ',':
+            new[i]=''
+        elif text[i] == '(':
+            new[i]=''
+        elif text[i] == ')':
+            new[i]=''
+        elif text[i] == '-':
+            new[i]=''
+        elif text[i] == '"':
+            new[i]=''
+        elif text[i] == '+':
+            new[i]=''
+
+
+#fajlba iras
+encrypted.writelines(["%s\n" % item for item in new])
+
+#-------------------eroforrasok elengedese---------------------------------------
+f.close()
+encrypted.close()
