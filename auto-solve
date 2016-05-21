@@ -1,0 +1,84 @@
+__author__ = 'Nori'
+
+import re
+import operator
+import sys
+
+#-----------------------fajl beolvasa----------------------------------------------
+f = open("encrypted.txt", "r")
+encrypted = f.read()
+encrypted = encrypted.upper()
+encrypted = re.sub('[\s+]', '',encrypted)
+
+n = open("knownSentence.txt", "r")
+known = n.read()
+known = known.upper()
+known = re.sub('[\s+]', '',known)
+
+#---------------------valtozok------------------------------------------------------
+abc = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z', 'I']
+abcLength=len(abc)
+freqencyABC = ['E', 'T', 'A', 'O', 'I', 'N', 'S', 'H', 'R', 'D', 'L', 'C', 'U', 'M', 'W', 'F', 'G', 'Y', 'P', 'B', 'V', 'K', 'X', 'J', 'Q', 'Z']
+solvedText = []
+frequency = {}
+keys = []
+foundAt = 0
+sentence = "brownjarspreventedthemixturefromfreezingtooquickly"
+
+for e in range(0, len(abc)):
+    frequency[abc[e]] = encrypted.count(abc[e])
+frequency = sorted(frequency.items(), key=operator.itemgetter(1), reverse=True)
+
+
+#-------------------------fuggvenyek------------------------------------------
+
+def printIt(n):
+    #szoveg formalizalasaa
+    koz =0
+    sor=0
+    for x in range(0, len(n)):
+        if sor==20:
+            print ''
+            sor=0
+        if koz==4:
+            print '',
+            koz=0
+        sor+=1
+        koz+=1
+        print n[x],
+    print
+
+def solve():
+    for x in range(6, len(encrypted)-8):
+        for y in range(0, len(abc)):
+            if (encrypted[x] == abc[y]) and (encrypted[x+1] == abc[y]):
+                for z in range(0, len(abc)):
+                    if (encrypted[x+7] == abc[z]) and (encrypted[x+8] == abc[z]):
+                        for w in range(0, len(abc)):
+                            if (encrypted[x-6] == abc[w]) and (encrypted[x-2] == abc[w]):
+                                for v in range(0, len(abc)):
+                                    if (encrypted[x-5] == abc[v]) and (encrypted[x-1] == abc[v]):
+                                        foundAt = x - 34
+
+    for s in range(0, len(sentence)):
+        keys.append(sentence[s])
+        keys.append(encrypted[s+foundAt])
+
+    for e in range(0, len(encrypted)):
+        for o in range(1,len(keys)):
+            if encrypted[e] == keys[o]:
+                solvedText.append(keys[o-1])
+                break
+
+    printIt(solvedText)
+
+#-------------------------------program indulasa-------------------------------------------------------------------------
+
+
+solve()
+
+
+
+#-------------------------------eroforrasok elengedese----------------------
+f.close()
+n.close()
