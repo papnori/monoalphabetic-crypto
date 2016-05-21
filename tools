@@ -1,0 +1,122 @@
+__author__ = 'Nori'
+
+import re
+import operator
+import sys
+
+#-----------------------fajl beolvasa----------------------------------------------
+f = open("encrypted.txt", "r")
+encrypted = f.read()
+encrypted = encrypted.upper()
+encrypted = re.sub('[\s+]', '',encrypted)
+
+#---------------------valtozok------------------------------------------------------
+abc = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z', 'I']
+abcLength=len(abc)
+freqencyABC = ['E', 'T', 'A', 'O', 'I', 'N', 'S', 'H', 'R', 'D', 'L', 'C', 'U', 'M', 'W', 'F', 'G', 'Y', 'P', 'B', 'V', 'K', 'X', 'J', 'Q', 'Z']
+changes = []
+changedText = list(encrypted)
+solvedText = []
+exit = True
+frequency = {}
+
+for e in range(0, len(abc)):
+    frequency[abc[e]] = changedText.count(abc[e])
+frequency = sorted(frequency.items(), key=operator.itemgetter(1), reverse=True)
+
+
+#-------------------------fuggvenyek------------------------------------------
+
+def printIt(n):
+    #szoveg formalizalasaa
+    koz =0
+    sor=0
+    for x in range(0, len(n)):
+        if sor==20:
+            print ''
+            sor=0
+        if koz==4:
+            print '',
+            koz=0
+        sor+=1
+        koz+=1
+        print n[x],
+    print
+
+def getHint():
+    for key in frequency:
+        print "Maybe change %s to %s" % (str(key), freqencyABC[frequency.index(key)])
+
+def change(c, t):
+    koz =0
+    sor=0
+    for x in range(0, len(changedText)):
+        if t!='':
+            if sor==20:
+                print ''
+                sor=0
+            if koz==4:
+                print '',
+                koz=0
+            sor+=1
+            koz+=1
+        if changedText[x] == c:
+            print '\033[1;35m%s\033[1;m' % t,
+        else:
+            print changedText[x],
+
+    for e in range(0,len(changedText)):
+        if changedText[e] == c:
+            changedText[e] = t
+
+    print
+    changes.append(c)
+    changes.append(t)
+
+def undo():
+    if len(changes) != 0:
+        this = changes.pop()
+        to = changes.pop()
+        for e in range(0,len(changedText)):
+            if changedText[e] == this:
+                changedText[e] = to
+    else:
+        print "Nothing to undo"
+
+def listOrder():
+    print frequency
+
+
+#-------------------------------program indulasa-------------------------------------------------------------------------
+
+
+while(exit):
+    print '\033[1;34mp: Print the encrypted text\033[1;m'
+    print '\033[1;34mh: Get a hint\033[1;m'
+    print '\033[1;34mc: Change character\033[1;m'
+    print '\033[1;34mu: Undo last change\033[1;m'
+    print '\033[1;34ml: List the most common characters in order\033[1;m'
+    print '\033[1;34me: Exit the program\033[1;m'
+    answer = raw_input('Choose a function: ')
+
+    if answer == 'p' or answer == 'P':
+        printIt(changedText)
+    elif answer == 'h' or answer == 'H':
+        getHint()
+    elif answer == 'c' or answer == 'C':
+        c = raw_input("Change character: ")
+        t = raw_input("To: ")
+        change(c, t)
+    elif answer == 'u' or answer == 'U':
+        undo()
+    elif answer == 'l' or answer == 'L':
+        listOrder()
+    elif answer == 'e' or answer == 'E':
+        exit = False
+    else:
+        print "It is not a function. Please choose a character."
+
+
+
+#-------------------------------eroforrasok elengedese----------------------
+f.close()
